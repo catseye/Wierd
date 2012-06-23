@@ -1,0 +1,56 @@
+Note: coordinates (x,y) here mean that y is the higher-on-stack (the row) and x
+is below it (the column).  The "stack" position is, of course, for purposes of
+getput.
+
+(1,1) holds the end-of-line character.
+(1,2) holds the current x coordinate.
+(2,1) holds the current y coordinate.
+(2,2) holds the beginnning-of-last-line-of-file character.
+
+This program is literally spaghetti code.  It basically works by getting itself
+with 135 degree turns, but it uses a few kludges to work around the data in the
+top-left.  Warning: trying to read the code may cause significant loss of
+sanity.  Oh wait a moment, you didn't have any in the first place.  Ok, go
+ahead, read the code, but don't blame me.
+
+Algorithm:
+1.  Get (1,1) and output (the first line must consist of just one character).
+2.  Push '\n'=10 (with "left, left, left, right, left, right, left, right,
+    left, right, left, right, left, right, left, right, left, right, left,
+    right, left, right, right") and output.
+3.  Put 3 in (2,1).
+4.  Put 1 in (1,2).
+5.  Get (1,3), which was equal to (2,1) at startup, and output.
+6.  Get (2,2) and output (the second line may have only have two characters).
+7.  Push '\n'=10 again (I didn't save it in step 2) and output.
+8.  Get (1,2).
+9.  Get (2,1).
+10. Get the character specified by the two coordinates at the top of the stack.
+11. Output it.
+12. Get ((1,2),(2,1)) again.
+13. Get (1,1) and compare.
+14. If equal, go to step 19, otherwise continue with step 15.
+15. Get (1,2).
+16. Increment.
+17. Put it back.
+18. Return to step 8 and repeat the whole process.
+19. This is a no-op step to remind you that you can only get here from the
+    conditional in step 14, not from step 18.
+20. Put 1 in (1,2).
+21. Push '\n'=10 (yes, I should save it somewhere, but place is limited,
+    particularly in this quine where special locations need special treatment)
+    and output.
+22. Get (1,(2,1)).  Note that this is the first character of the just-finished
+    line.
+23. Get (2,2) and compare.
+24. If equal, quit the program.  If unequal, continue to step 25.
+25. Get (2,1).
+26. Increment.
+27. Put it back.
+28. Return to step 8.
+And that's making it sound simpler than it really is.
+
+As it happens, the Wierd logo is 42 characters wide.  Also, the asterisk, which
+is the traditional wire character (although it is not treated specially by the
+computer), has ASCII code 42.  Is Wierd the answer to life, the universe, and
+everything (or to anything, for that matter)?
