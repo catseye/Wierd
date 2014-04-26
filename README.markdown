@@ -48,6 +48,10 @@ the yoob implementation or in `wierd.c` or in the spec.
 Given all this, it is really doubtful that any of these implementations or
 documents can be considered normative.
 
+Chris also recently patched Milo's implementation to take standard long
+options, for portability (NetBSD doesn't have `getopt_long_only`.)  (Sorry
+Milo, hope you don't mind.)
+
 [yoob]: http://catseye.tc/projects/yoob/
 
 License

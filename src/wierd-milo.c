@@ -154,9 +154,9 @@ void print_stack(void)
 void help(void)
 {
    fprintf(stderr, "Valid options:\n");
-   fprintf(stderr, "-help:          Show this screen.\n");
-   fprintf(stderr, "-size <number>: Set the memory size.\n");
-   fprintf(stderr, "-debug:         Print debugging information.\n");
+   fprintf(stderr, "--help:          Show this screen.\n");
+   fprintf(stderr, "--size <number>: Set the memory size.\n");
+   fprintf(stderr, "--debug:         Print debugging information.\n");
    fprintf(stderr, "There should also be a non-option argument naming the program to be run.\n");
    exit(1);
 }
@@ -175,7 +175,7 @@ int main(int argc, char **argv)
    opterr = 0;
    while(!done)
    {
-      switch(getopt_long_only(argc, argv, "-?", options, NULL))
+      switch(getopt_long(argc, argv, "-?", options, NULL))
       {
       case 's': if(*optarg == '\0') help();
                 size = strtol(optarg, &ptr, 10);
