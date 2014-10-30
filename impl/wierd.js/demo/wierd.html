@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="utf-8">
+  <title>wierd.js</title>
+  <style>
+#canvas { border: 1px solid blue; }
+#canvas_viewport {
+    width: 800px; height: 600px; overflow: scroll; border: 1px solid black;
+}
+#info { float: right; }
+#program {
+  display: none;
+}
+#load {
+  display: none;
+}
+#output {
+  border: 1px solid red;
+}
+  </style>
+</head>
+<body>
+
+<h1>Wierd</h1>
+
+<button id="load">Load</button>
+<button id="edit">Edit</button>
+<button id="start">Start</button>
+<button id="stop">Stop</button>
+<button id="step">Step</button>
+Speed: <input id="speed" type="range" min="0" max="200" value="0" />
+
+<div id="canvas_viewport">
+  <canvas id="canvas" width="400" height="400">
+    Your browser doesn't support displaying an HTML5 canvas.
+  </canvas>
+</div>
+
+<pre id="output"></pre>
+
+<textarea id="program" rows="25" cols="40">
+</textarea>
+
+</body>
+<script src="../src/yoob/controller.js"></script>
+<script src="../src/yoob/playfield.js"></script>
+<script src="../src/yoob/playfield-canvas-view.js"></script>
+<script src="../src/yoob/cursor.js"></script>
+<script src="../src/yoob/stack.js"></script>
+<script src="../src/wierd.js"></script>
+<script>
+  var c = new WierdController();
+  var v = new yoob.PlayfieldCanvasView;
+  v.init(null, document.getElementById('canvas'));
+  v.setCellDimensions(undefined, 6);
+  c.init(v);
+  c.connect({
+    'start': 'start',
+    'stop': 'stop',
+    'step': 'step',
+    'load': 'load',
+    'edit': 'edit',
+    'speed': 'speed',
+    'source': 'program',
+    'display': 'canvas_viewport'
+  });
+  c.click_load();
+</script>
