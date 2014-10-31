@@ -78,12 +78,12 @@ function WierdController() {
         } else if (this.tryAhead(225, true)) {
             var a = stack.pop();
             if (a === 0) {
-                var c = 'x';
-                // TODO acquire input somehow
-                if (c == null) {
+                var c = this.inputElem.value;
+                if (c === '') {
                     return 'block';
                 }
                 stack.push(c.charCodeAt(0));
+                this.inputElem.value = c.substr(1);
                 //console.log("[IN]");
             } else {
                 var a = stack.pop();
