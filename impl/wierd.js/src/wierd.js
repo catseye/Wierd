@@ -15,13 +15,15 @@ function WierdController() {
     var stack;
     var output;
 
-    this.init = function(view) {
+    this.init = function(cfg) {
         pf = new yoob.Playfield();
         ip = new yoob.Cursor().init(0, 0, 1, 1);
         stack = new yoob.Stack();
-        view.pf = pf;
-        this.view = view.setCursors([ip]);
+        cfg.playfieldView.pf = pf; // setPlayfield, surely?
+        this.view = cfg.playfieldView.setCursors([ip]);
         output = document.getElementById('output');
+        this.stackCanvas = cfg.stackCanvas;
+        this.inputElem = cfg.inputElem;
     };
 
     this.step = function() {
@@ -105,6 +107,7 @@ function WierdController() {
         }
 
         this.view.draw();
+        stack.drawCanvas(this.stackCanvas, 10, 10);
     };
 
     this.load = function(text) {
@@ -113,6 +116,7 @@ function WierdController() {
         ip.dx = 1;
         ip.dy = 1;
         this.view.draw();
+        stack.drawCanvas(this.stackCanvas, 10, 10);
     };
 
     this.tryAhead = function(degrees, advance) {
