@@ -79,9 +79,9 @@ function WierdController() {
             var a = stack.pop();
             if (a === 0) {
                 var c = 'x';
+                // TODO acquire input somehow
                 if (c == null) {
-                    //needsInput = true;
-                    //return errors;
+                    return 'block';
                 }
                 stack.push(c.charCodeAt(0));
                 //console.log("[IN]");
@@ -100,8 +100,7 @@ function WierdController() {
                 ip.advance();
                 //console.log("[SPRK]");
             } else {
-                //halted = true;
-                //return errors;
+                return 'stop';
             }
         }
 
