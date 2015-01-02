@@ -11,7 +11,8 @@ function launch(prefix, container, config) {
         "playfield-canvas-view.js",
         "cursor.js",
         "stack.js",
-        "element-factory.js"
+        "element-factory.js",
+        "preset-manager.js"
     ];
     var loaded = 0;
     for (var i = 0; i < deps.length; i++) {
@@ -19,6 +20,8 @@ function launch(prefix, container, config) {
         elem.src = prefix + deps[i];
         elem.onload = function() {
             if (++loaded != deps.length) return;
+
+            // a certain amount of this should/will be absorbed into yoob.js
 
             var controlPanel = config.controlPanel || container;
 
@@ -34,6 +37,8 @@ function launch(prefix, container, config) {
             var speedControl = yoob.makeSlider(buttonPanel,
               "Speed:", 0, 200, 100);
 
+            var presetSelect = yoob.makeSelect(buttonPanel, "Preset:", []);
+
             var statePanel = yoob.makeDiv(controlPanel);
             yoob.makeSpan(statePanel, "Stack:");
             var stackDisplay = yoob.makeCanvas(statePanel, 400, 100);
@@ -44,7 +49,7 @@ function launch(prefix, container, config) {
             yoob.makeSpan(statePanel, "Output:");
             var outputElem = yoob.makeDiv(statePanel);
             yoob.makeLineBreak(statePanel);
-            
+
             var editor = yoob.makeTextArea(container, 25, 40);
 
             WierdController.prototype = new yoob.Controller();
@@ -69,6 +74,32 @@ function launch(prefix, container, config) {
                 'display': viewPort
             });
             c.click_load();
+
+            var p = new yoob.PresetManager();
+            p.init({
+                'selectElem': presetSelect,
+                'controller': c,
+            });
+
+            var setPreset = function(n) {
+                c.click_stop(); // in case it is currently running
+                var http = new XMLHttpRequest();
+                var url = '../../../eg/' + n;
+                http.open("get", url, true);
+                http.onload = function(e) {
+                    if (http.readyState === 4 && http.responseText) {
+                        if (http.status === 200) {
+                            // this is not efficient -- should cache it in an element
+                            c.loadSource(http.responseText);
+                        } else {
+                            alert("Error: could not load " + url + ": " + http.statusText);  
+                        }
+                    }
+                };
+                http.send(null);
+            };
+
+            p.add('hello.w', setPreset);
         };
         document.body.appendChild(elem);
     }
