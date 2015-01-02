@@ -1,11 +1,65 @@
 "use strict";
 
-/*
- * requires yoob.Controller
- * requires yoob.Playfield
- * requires yoob.Cursor
- * requires yoob.Stack
- */
+function launch(prefix, containerId) {
+    var deps = [
+        "controller.js",
+        "playfield.js",
+        "cursor.js",
+        "stack.js",
+        "element-factory.js"
+    ];
+    var loaded = 0;
+    for (var i = 0; i < deps.length; i++) {
+        var elem = document.createElement('script');
+        elem.src = prefix + deps[i];
+        elem.onload = function() {
+            if (++loaded != deps.length) return;
+
+            var container = document.getElementById(containerId);
+            
+            var buttonPanel = yoob.makeDiv(container);
+            var loadButton = yoob.makeButton(buttonPanel, 'Load');
+            var editButton = yoob.makeButton(buttonPanel, 'Edit');
+            var startButton = yoob.makeButton(buttonPanel, 'Start');
+            var stopButton = yoob.makeButton(buttonPanel, 'Stop');
+            var stepButton = yoob.makeButton(buttonPanel, 'Step');
+            //  Speed: <input id="speed" type="range" min="0" max="200" value="0" />
+            
+            var viewPort = yoob.makeDiv(container);
+            var canvas = yoob.makeCanvas(viewPort, 400, 400);
+            
+            var editor = yoob.makeTextArea(container, 25, 40);
+            
+            var stackDisplay = yoob.makeCanvas(container, 400, 100);
+            var inputElem = yoob.makeTextInput(container);
+            var outputElem = yoob.makeDiv(container);
+
+            WierdController.prototype = new yoob.Controller();
+            var c = new WierdController();
+            var v = new yoob.PlayfieldCanvasView;
+            v.init(null, canvas);
+            v.setCellDimensions(undefined, 6);
+            c.init({
+                playfieldView: v,
+                stackCanvas: stackDisplay,
+                inputElem: inputElem,
+                outputElem: outputElem
+            });
+            c.connect({
+                'start': startButton,
+                'stop': stopButton,
+                'step': stepButton,
+                'load': loadButton,
+                'edit': editButton,
+                //'speed': 'speed',
+                'source': programEditor,
+                'display': viewPort
+            });
+            c.click_load();
+        };
+        document.body.appendChild(elem);
+    }
+}
 
 function WierdController() {
     var intervalId;
@@ -135,4 +189,3 @@ function WierdController() {
         return false;
     };
 };
-WierdController.prototype = new yoob.Controller();

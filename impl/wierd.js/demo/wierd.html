@@ -57,6 +57,7 @@
 <script src="../src/yoob/stack.js"></script>
 <script src="../src/wierd.js"></script>
 <script>
+  WierdController.prototype = new yoob.Controller();
   var c = new WierdController();
   var v = new yoob.PlayfieldCanvasView;
   v.init(null, document.getElementById('canvas'));
