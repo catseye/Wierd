@@ -1,9 +1,14 @@
 "use strict";
 
-function launch(prefix, containerId) {
+function launch(prefix, container, config) {
+    config = config || {};
+    if (typeof(container) === 'string') {
+        container = document.getElementById(container);
+    }
     var deps = [
         "controller.js",
         "playfield.js",
+        "playfield-canvas-view.js",
         "cursor.js",
         "stack.js",
         "element-factory.js"
@@ -15,24 +20,32 @@ function launch(prefix, containerId) {
         elem.onload = function() {
             if (++loaded != deps.length) return;
 
-            var container = document.getElementById(containerId);
-            
-            var buttonPanel = yoob.makeDiv(container);
+            var controlPanel = config.controlPanel || container;
+
+            var viewPort = yoob.makeDiv(container);
+            var canvas = yoob.makeCanvas(viewPort, 400, 400);
+
+            var buttonPanel = yoob.makeDiv(controlPanel);
             var loadButton = yoob.makeButton(buttonPanel, 'Load');
             var editButton = yoob.makeButton(buttonPanel, 'Edit');
             var startButton = yoob.makeButton(buttonPanel, 'Start');
             var stopButton = yoob.makeButton(buttonPanel, 'Stop');
             var stepButton = yoob.makeButton(buttonPanel, 'Step');
-            //  Speed: <input id="speed" type="range" min="0" max="200" value="0" />
-            
-            var viewPort = yoob.makeDiv(container);
-            var canvas = yoob.makeCanvas(viewPort, 400, 400);
+            var speedControl = yoob.makeSlider(buttonPanel,
+              "Speed:", 0, 200, 100);
+
+            var statePanel = yoob.makeDiv(controlPanel);
+            yoob.makeSpan(statePanel, "Stack:");
+            var stackDisplay = yoob.makeCanvas(statePanel, 400, 100);
+            yoob.makeLineBreak(statePanel);
+            yoob.makeSpan(statePanel, "Input:");
+            var inputElem = yoob.makeTextInput(statePanel);
+            yoob.makeLineBreak(statePanel);
+            yoob.makeSpan(statePanel, "Output:");
+            var outputElem = yoob.makeDiv(statePanel);
+            yoob.makeLineBreak(statePanel);
             
             var editor = yoob.makeTextArea(container, 25, 40);
-            
-            var stackDisplay = yoob.makeCanvas(container, 400, 100);
-            var inputElem = yoob.makeTextInput(container);
-            var outputElem = yoob.makeDiv(container);
 
             WierdController.prototype = new yoob.Controller();
             var c = new WierdController();
@@ -51,8 +64,8 @@ function launch(prefix, containerId) {
                 'step': stepButton,
                 'load': loadButton,
                 'edit': editButton,
-                //'speed': 'speed',
-                'source': programEditor,
+                'speed': speedControl,
+                'source': editor,
                 'display': viewPort
             });
             c.click_load();
