@@ -1,5 +1,5 @@
 /*
- * This file is part of yoob.js version 0.6
+ * This file is part of yoob.js version 0.7-PRE
  * Available from https://github.com/catseye/yoob.js/
  * This file is in the public domain.  See http://unlicense.org/ for details.
  */
@@ -19,6 +19,7 @@ if (window.yoob === undefined) yoob = {};
  *   - step
  *   - load
  *   - edit
+ *   - reset
  *
  * - a slider control which adjusts the speed of program state evolution.
  *
@@ -91,11 +92,29 @@ yoob.Controller = function() {
      * are the actions a controller can undertake, and the values
      * are either DOM elements or strings; if strings, DOM elements
      * with those ids will be obtained from the document and used.
+     *
+     * When the button associated with e.g. 'start' is clicked,
+     * the corresponding method (in this case, 'click_start()')
+     * on this Controller will be called.  These functions are
+     * responsible for changing the state of the Controller (both
+     * the internal state, and the enabled status, etc. of the
+     * controls), and for calling other methods on the Controller
+     * to implement the particulars of the action.
+     *
+     * For example, 'click_step()' calls 'performStep()' which
+     * calls 'step()' (which a subclass or instantiator must
+     * provide an implementation for.)
+     *
+     * To simulate one of the buttons being clicked, you may
+     * call 'click_foo()' yourself in code.  However, that will
+     * be subject to the current restrictions of the interface.
+     * You may be better off calling one of the "internal" methods
+     * like 'performStep()'.
      */
     this.connect = function(dict) {
         var $this = this;
 
-        var keys = ["start", "stop", "step", "load", "edit"];
+        var keys = ["start", "stop", "step", "load", "edit", "reset"];
         for (var i in keys) {
             var key = keys[i];
             var value = dict[key];
@@ -121,7 +140,7 @@ yoob.Controller = function() {
                 if (key === 'speed') {
                     this.speed.value = this.delay;
                     this.speed.onchange = function(e) {
-                        $this.delay = speed.value;
+                        $this.setDelayFrom($this.speed);
                         if ($this.intervalId !== undefined) {
                             $this.stop();
                             $this.start();
@@ -206,6 +225,34 @@ yoob.Controller = function() {
         this.loadSource(text);
     };
 
+    /*
+     * This is the basic idea, but not fleshed out yet.
+     * - Should we cache the source somewhere?
+     * - While we're waiting, should we disable the UI / show a spinny?
+     */
+    this.loadSourceFromURL = function(url, errorCallback) {
+        var http = new XMLHttpRequest();
+        var $this = this;
+        if (!errorCallback) {
+            errorCallback = function(http) {
+                $this.loadSource(
+                    "Error: could not load " + url + ": " + http.statusText
+                );
+            }
+        }
+        http.open("get", url, true);
+        http.onload = function(e) {
+            if (http.readyState === 4 && http.responseText) {
+                if (http.status === 200) {
+                    $this.loadSource(http.responseText);
+                } else {
+                    errorCallback(http);
+                }
+            }
+        };
+        http.send(null);
+    };
+
     this.click_edit = function(e) {
         this.click_stop();
         if (this.controls.edit) this.controls.edit.style.display = "none";
@@ -238,6 +285,7 @@ yoob.Controller = function() {
     this.click_stop = function(e) {
         this.stop();
         this.state = PAUSED;
+        /* why is this check here? ... */
         if (this.controls.stop && this.controls.stop.disabled) {
             return;
         }
@@ -259,5 +307,21 @@ yoob.Controller = function() {
             return;
         clearInterval(this.intervalId);
         this.intervalId = undefined;
+    };
+
+    this.click_reset = function(e) {
+        this.click_stop();
+        this.load(this.source.value);
+        if (this.controls.start) this.controls.start.disabled = false;
+        if (this.controls.step) this.controls.step.disabled = false;
+        if (this.controls.stop) this.controls.stop.disabled = true;
+    };
+
+    /*
+     * Override this to change how the delay is acquired from the 'speed'
+     * element.
+     */
+    this.setDelayFrom = function(elem) {
+        this.delay = elem.max - elem.value;
     };
 };

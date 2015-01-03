@@ -66,8 +66,10 @@ function launch(prefix, container, config) {
             stopButton.style.width = "5em";
             var stepButton = yoob.makeButton(buttonPanel, 'Step');
             stepButton.style.width = "5em";
-            var speedControl = yoob.makeSlider(buttonPanel,
-              "Speed:", 0, 200, 100);
+            var resetButton = yoob.makeButton(buttonPanel, 'Reset');
+            resetButton.style.width = "5em";
+            yoob.makeSpan(buttonPanel, "Speed:");
+            var speedControl = yoob.makeSlider(buttonPanel, 0, 200, 100);
 
             var presetSelect = yoob.makeSelect(buttonPanel, "Preset:", []);
 
@@ -99,6 +101,7 @@ function launch(prefix, container, config) {
                 'start': startButton,
                 'stop': stopButton,
                 'step': stepButton,
+                'reset': resetButton,
                 'load': loadButton,
                 'edit': editButton,
                 'speed': speedControl,
@@ -242,7 +245,10 @@ function WierdController() {
 
     this.load = function(text) {
         pf.clear();
+        stack = new yoob.Stack();
         pf.load(1, 1, text);
+        ip.x = 1;
+        ip.y = 1;
         ip.dx = 1;
         ip.dy = 1;
         this.view.draw();
