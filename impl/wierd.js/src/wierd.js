@@ -118,20 +118,7 @@ function launch(prefix, container, config) {
 
             var setPreset = function(n) {
                 c.click_stop(); // in case it is currently running
-                var http = new XMLHttpRequest();
-                var url = '../../../eg/' + n;
-                http.open("get", url, true);
-                http.onload = function(e) {
-                    if (http.readyState === 4 && http.responseText) {
-                        if (http.status === 200) {
-                            // this is not efficient -- should cache it in an element
-                            c.loadSource(http.responseText);
-                        } else {
-                            alert("Error: could not load " + url + ": " + http.statusText);  
-                        }
-                    }
-                };
-                http.send(null);
+                c.loadSourceFromURL('../../../eg/' + n);
             };
 
             p.add('hello.w', setPreset);
