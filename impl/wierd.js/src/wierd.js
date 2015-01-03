@@ -57,10 +57,15 @@ function launch(prefix, container, config) {
 
             var buttonPanel = yoob.makeDiv(controlPanel);
             var loadButton = yoob.makeButton(buttonPanel, 'Load');
+            loadButton.style.width = "5em";
             var editButton = yoob.makeButton(buttonPanel, 'Edit');
+            editButton.style.width = "5em";
             var startButton = yoob.makeButton(buttonPanel, 'Start');
+            startButton.style.width = "5em";
             var stopButton = yoob.makeButton(buttonPanel, 'Stop');
+            stopButton.style.width = "5em";
             var stepButton = yoob.makeButton(buttonPanel, 'Step');
+            stepButton.style.width = "5em";
             var speedControl = yoob.makeSlider(buttonPanel,
               "Speed:", 0, 200, 100);
 
@@ -142,11 +147,11 @@ function WierdController() {
 
     this.init = function(cfg) {
         pf = new yoob.Playfield();
-        ip = new yoob.Cursor().init(0, 0, 1, 1);
+        ip = new yoob.Cursor().init(1, 1, 1, 1);
         stack = new yoob.Stack();
         cfg.playfieldView.pf = pf; // setPlayfield, surely?
         this.view = cfg.playfieldView.setCursors([ip]);
-        output = document.getElementById('output');
+        output = cfg.outputElem;
         this.stackCanvas = cfg.stackCanvas;
         this.inputElem = cfg.inputElem;
     };
