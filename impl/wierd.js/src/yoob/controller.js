@@ -77,13 +77,13 @@ yoob.Controller = function() {
     /*
      * This is not a public method.
      */
-    this._makeEventHandler = function(control, key) {
-        if (this['click_' + key] !== undefined) {
-            key = 'click_' + key;
+    this._makeEventHandler = function(control, action) {
+        if (this['click_' + action] !== undefined) {
+            action = 'click_' + action;
         }
         var $this = this;
         return function(e) {
-            $this[key](control);
+            $this[action](control);
         };
     };
 
@@ -360,19 +360,20 @@ yoob.Controller = function() {
     this.makeButtonPanel = function(container) {
         var buttonPanel = document.createElement('div');
         container.appendChild(buttonPanel);
-        var makeButton = function(labelText) {
+        var $this = this;
+        var makeButton = function(action) {
             var button = document.createElement('button');
-            button.innerHTML = labelText;
+            button.innerHTML = action; // TODO: capitalize
             button.style.width = "5em";
             buttonPanel.appendChild(button);
+            button.onclick = $this._makeEventHandler(button, action);
+            $this.controls[action] = button;
             return button;
         };
-        this.controls.load = makeButton('Load');
-        this.controls.edit = makeButton('Edit');
-        this.controls.start = makeButton('Start');
-        this.controls.stop = makeButton('Stop');
-        this.controls.step = makeButton('Step');
-        this.controls.reset = makeButton('Reset');
+        var keys = ["start", "stop", "step", "load", "edit", "reset"];
+        for (var i = 0; i < keys.length; i++) {
+            makeButton(keys[i]);
+        }
         return buttonPanel;
     };
 
