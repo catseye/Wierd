@@ -1,5 +1,5 @@
 /*
- * This file is part of yoob.js version 0.7-2015.0108
+ * This file is part of yoob.js version 0.8-PRE
  * Available from https://github.com/catseye/yoob.js/
  * This file is in the public domain.  See http://unlicense.org/ for details.
  */
@@ -55,7 +55,7 @@ if (window.yoob === undefined) yoob = {};
  *
  * You should *not* store it in the `.state` attribute, as a yoob.Controller
  * uses this to track its own state (yes, it has its own state independent of
- * the program state.  at least potentially.)
+ * the program state.)
  */
 yoob.Controller = function() {
     var STOPPED = 0;   // the program has terminated (itself)
@@ -326,4 +326,54 @@ yoob.Controller = function() {
     this.setDelayFrom = function(elem) {
         this.delay = elem.max - elem.value;
     };
+
+    this.initLocalStorage = function() {
+        var supportsLocalStorage = (
+            window['localStorage'] !== undefined &&
+            window['localStorage'] !== null
+        );
+        /* this is all just demo-y for now */
+        if (supportsLocalStorage) {
+            // you will only get this from OTHER windows/tabs.
+            var onstorage = function(e) {
+                if (!e) { e = window.event; }
+                alert(e.key + ',' + e.oldValue + ',' + e.newValue + e.url);
+            };
+            if (window.addEventListener) {
+              window.addEventListener("storage", onstorage, false);
+            } else {
+              window.attachEvent("onstorage", onstorage);
+            }
+        
+            localStorage.setItem('foo', 'bar');
+            //alert(localStorage.getItem('foo'));
+            //alert(localStorage.length);
+            localStorage.removeItem('foo');
+            //alert(localStorage.length);
+            localStorage.setItem('foo', 'bar');
+            //alert(localStorage.key(0));
+            localStorage.clear();
+            //alert(localStorage.length);
+        }
+    };
+
+    this.makeButtonPanel = function(container) {
+        var buttonPanel = document.createElement('div');
+        container.appendChild(buttonPanel);
+        var makeButton = function(labelText) {
+            var button = document.createElement('button');
+            button.innerHTML = labelText;
+            button.style.width = "5em";
+            buttonPanel.appendChild(button);
+            return button;
+        };
+        this.controls.load = makeButton('Load');
+        this.controls.edit = makeButton('Edit');
+        this.controls.start = makeButton('Start');
+        this.controls.stop = makeButton('Stop');
+        this.controls.step = makeButton('Step');
+        this.controls.reset = makeButton('Reset');
+        return buttonPanel;
+    };
+
 };
