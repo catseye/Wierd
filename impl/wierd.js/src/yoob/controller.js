@@ -1,5 +1,5 @@
 /*
- * This file is part of yoob.js version 0.7
+ * This file is part of yoob.js version 0.7-2015.0108
  * Available from https://github.com/catseye/yoob.js/
  * This file is in the public domain.  See http://unlicense.org/ for details.
  */
@@ -195,6 +195,7 @@ yoob.Controller = function() {
         if (this.controls.start) this.controls.start.disabled = false;
         if (this.controls.step) this.controls.step.disabled = false;
         if (this.controls.stop) this.controls.stop.disabled = true;
+        if (this.controls.reset) this.controls.reset.disabled = false;
         if (this.display) this.display.style.display = "block";
         if (this.source) this.source.style.display = "none";
     };
@@ -260,6 +261,7 @@ yoob.Controller = function() {
         if (this.controls.start) this.controls.start.disabled = true;
         if (this.controls.step) this.controls.step.disabled = true;
         if (this.controls.stop) this.controls.stop.disabled = true;
+        if (this.controls.reset) this.controls.reset.disabled = true;
         if (this.display) this.display.style.display = "none";
         if (this.source) this.source.style.display = "block";
     };
