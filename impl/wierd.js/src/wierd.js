@@ -21,57 +21,10 @@ function launch(prefix, container, config) {
         elem.onload = function() {
             if (++loaded != deps.length) return;
 
-            // a certain amount of this should/will be absorbed into yoob.js
-
-            var supportsLocalStorage = (
-                window['localStorage'] !== undefined &&
-                window['localStorage'] !== null
-            );
-            if (supportsLocalStorage) {
-                // you will only get this from OTHER windows/tabs.
-                var onstorage = function(e) {
-                    if (!e) { e = window.event; }
-                    alert(e.key + ',' + e.oldValue + ',' + e.newValue + e.url);
-                };
-                if (window.addEventListener) {
-                  window.addEventListener("storage", onstorage, false);
-                } else {
-                  window.attachEvent("onstorage", onstorage);
-                }
-
-                localStorage.setItem('foo', 'bar');
-                //alert(localStorage.getItem('foo'));
-                //alert(localStorage.length);
-                localStorage.removeItem('foo');
-                //alert(localStorage.length);
-                localStorage.setItem('foo', 'bar');
-                //alert(localStorage.key(0));
-                localStorage.clear();
-                //alert(localStorage.length);
-            }
-
             var controlPanel = config.controlPanel || container;
 
             var viewPort = yoob.makeDiv(container);
             var canvas = yoob.makeCanvas(viewPort, 400, 400);
-
-            var buttonPanel = yoob.makeDiv(controlPanel);
-            var loadButton = yoob.makeButton(buttonPanel, 'Load');
-            loadButton.style.width = "5em";
-            var editButton = yoob.makeButton(buttonPanel, 'Edit');
-            editButton.style.width = "5em";
-            var startButton = yoob.makeButton(buttonPanel, 'Start');
-            startButton.style.width = "5em";
-            var stopButton = yoob.makeButton(buttonPanel, 'Stop');
-            stopButton.style.width = "5em";
-            var stepButton = yoob.makeButton(buttonPanel, 'Step');
-            stepButton.style.width = "5em";
-            var resetButton = yoob.makeButton(buttonPanel, 'Reset');
-            resetButton.style.width = "5em";
-            yoob.makeSpan(buttonPanel, "Speed:");
-            var speedControl = yoob.makeSlider(buttonPanel, 0, 200, 100);
-
-            var presetSelect = yoob.makeSelect(buttonPanel, "Preset:", []);
 
             var statePanel = yoob.makeDiv(controlPanel);
             yoob.makeSpan(statePanel, "Stack:");
@@ -97,13 +50,13 @@ function launch(prefix, container, config) {
                 inputElem: inputElem,
                 outputElem: outputElem
             });
+
+            var buttonPanel = c.makeButtonPanel(controlPanel);
+            yoob.makeSpan(buttonPanel, "Speed:");
+            var speedControl = yoob.makeSlider(buttonPanel, 0, 200, 100);
+            var presetSelect = yoob.makeSelect(buttonPanel, "Preset:", []);
+
             c.connect({
-                'start': startButton,
-                'stop': stopButton,
-                'step': stepButton,
-                'reset': resetButton,
-                'load': loadButton,
-                'edit': editButton,
                 'speed': speedControl,
                 'source': editor,
                 'display': viewPort
@@ -122,6 +75,7 @@ function launch(prefix, container, config) {
             };
 
             p.add('hello.w', setPreset);
+            p.select('hello.w');
         };
         document.body.appendChild(elem);
     }
