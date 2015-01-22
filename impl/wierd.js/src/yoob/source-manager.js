@@ -18,6 +18,7 @@ yoob.SourceManager = function() {
     /*
      * editor: an element (usually a textarea) which stores the source code
      * display: an element which contains the animation/controller
+     * panelContainer: an element into which to add the created button panel
      */
     this.init = function(cfg) {
         this.editor = cfg.editor;

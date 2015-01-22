@@ -24,10 +24,14 @@ function launch(prefix, container, config) {
 
             var controlPanel = config.controlPanel || container;
 
+            /* --- state animation display --- */
+
             var viewPort = yoob.makeDiv(container);
             var canvas = yoob.makeCanvas(viewPort, 400, 400);
+            canvas.style.display = 'inline-block';
 
-            var statePanel = yoob.makeDiv(controlPanel);
+            var statePanel = yoob.makeDiv(viewPort);
+            statePanel.style.display = 'inline-block';
             yoob.makeSpan(statePanel, "Stack:");
             var stackDisplay = yoob.makeCanvas(statePanel, 400, 100);
             yoob.makeLineBreak(statePanel);
@@ -38,7 +42,10 @@ function launch(prefix, container, config) {
             var outputElem = yoob.makeDiv(statePanel);
             yoob.makeLineBreak(statePanel);
 
-            var editor = yoob.makeTextArea(container, 25, 40);
+            var editor = yoob.makeTextArea(container, 160, 50);
+            editor.style.fontSize = "6px";
+
+            /* --- controller --- */
 
             WierdController.prototype = new yoob.Controller();
             var c = new WierdController();
@@ -55,7 +62,6 @@ function launch(prefix, container, config) {
             var buttonPanel = c.makeButtonPanel(controlPanel);
             yoob.makeSpan(buttonPanel, "Speed:");
             var speedControl = yoob.makeSlider(buttonPanel, 0, 200, 100);
-            var presetSelect = yoob.makeSelect(buttonPanel, "Preset:", []);
 
             c.connect({
                 'speed': speedControl,
@@ -64,17 +70,26 @@ function launch(prefix, container, config) {
             });
             c.click_load();
 
+            /* --- source manager --- */
+
+            var sm = (new yoob.SourceManager()).init({
+                editor: editor,
+                display: viewPort,
+                panelContainer: controlPanel
+            });
+
+            /* --- presets --- */
+
+            var presetSelect = yoob.makeSelect(buttonPanel, "Preset:", []);
             var p = new yoob.PresetManager();
             p.init({
                 'selectElem': presetSelect,
                 'controller': c,
             });
-
             var setPreset = function(n) {
                 c.click_stop(); // in case it is currently running
                 c.loadSourceFromURL('../../../eg/' + n);
             };
-
             p.add('hello.w', setPreset);
             p.select('hello.w');
         };
