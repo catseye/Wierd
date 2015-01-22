@@ -28,26 +28,29 @@ yoob.SourceManager = function() {
         if (cfg.panelContainer) {
             cfg.panelContainer.appendChild(this.panel);
         }
+        this.onClickDone();
         return this;
     };
 
     this.makePanel = function() {
         var panel = document.createElement('div');
         var $this = this;
-        var keys = ["edit", "done", "load", "save", "export"];
-        for (var i = 0; i < keys.length; i++) {
-            var action = keys[i];
+        var makeButton = function(action) {
             var button = document.createElement('button');
             var upperAction = action.charAt(0).toUpperCase() + action.slice(1);
             button.innerHTML = upperAction;
             button.style.width = "5em";
             panel.appendChild(button);
             button.onclick = function(e) {
-                var method = $this['click' + upperAction];
-                if (method) { method(); }
+                if ($this['onClick' + upperAction]) {
+                    $this['onClick' + upperAction]();
+                }
             }
             $this.controls[action] = button;
-            return button;
+        };
+        var keys = ["edit", "done", "load", "save", "export"];
+        for (var i = 0; i < keys.length; i++) {
+            makeButton(keys[i]);
         }
         return panel;
     };
@@ -58,7 +61,7 @@ yoob.SourceManager = function() {
         this.controls.edit.style.disabled = true;
         var keys = ["done", "load", "save", "export"];
         for (var i = 0; i < keys.length; i++) {
-            this.controls[keys[i]].style.disabled = false;
+            this.controls[keys[i]].style.display = 'inline';
         }
         this.onEdit();
     };
@@ -66,10 +69,10 @@ yoob.SourceManager = function() {
     this.onClickDone = function() {
         this.editor.style.display = 'none';
         this.display.style.display = 'block';
-        this.controls.edit.style.disabled = true;
+        this.controls.edit.style.disabled = false;
         var keys = ["done", "load", "save", "export"];
         for (var i = 0; i < keys.length; i++) {
-            this.controls[keys[i]].style.disabled = false;
+            this.controls[keys[i]].style.display = 'none';
         }
         this.onDone();
     };

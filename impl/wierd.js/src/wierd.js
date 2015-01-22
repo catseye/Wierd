@@ -73,9 +73,9 @@ function launch(prefix, container, config) {
             /* --- source manager --- */
 
             var sm = (new yoob.SourceManager()).init({
-                editor: editor,
-                display: viewPort,
-                panelContainer: controlPanel
+                'editor': editor,
+                'display': viewPort,
+                'panelContainer': controlPanel
             });
 
             /* --- presets --- */
