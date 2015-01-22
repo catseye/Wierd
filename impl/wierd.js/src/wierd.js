@@ -12,7 +12,8 @@ function launch(prefix, container, config) {
         "cursor.js",
         "stack.js",
         "element-factory.js",
-        "preset-manager.js"
+        "preset-manager.js",
+        "source-manager.js"
     ];
     var loaded = 0;
     for (var i = 0; i < deps.length; i++) {

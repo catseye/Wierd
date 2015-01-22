@@ -22,23 +22,64 @@ yoob.SourceManager = function() {
     this.init = function(cfg) {
         this.editor = cfg.editor;
         this.display = cfg.display;
+        this.controls = {};
         this.panel = this.makePanel();
+        if (cfg.panelContainer) {
+            cfg.panelContainer.appendChild(this.panel);
+        }
         return this;
     };
 
-    this.makeEditButton = function(container) {
-        var button = document.createElement('button');
-        button.innerHTML = "Edit";
-        button.style.width = "5em";
-        if (container) {
-            container.appendChild(button);
+    this.makePanel = function() {
+        var panel = document.createElement('div');
+        var $this = this;
+        var keys = ["edit", "done", "load", "save", "export"];
+        for (var i = 0; i < keys.length; i++) {
+            var action = keys[i];
+            var button = document.createElement('button');
+            var upperAction = action.charAt(0).toUpperCase() + action.slice(1);
+            button.innerHTML = upperAction;
+            button.style.width = "5em";
+            panel.appendChild(button);
+            button.onclick = function(e) {
+                var method = $this['click' + upperAction];
+                if (method) { method(); }
+            }
+            $this.controls[action] = button;
+            return button;
         }
-        button.onclick = function(e) {
-            // heck I dunno
-            this.editor.style.display = 'block';
-            this.display.style.display = 'none';
-        };
-        return button;
+        return panel;
+    };
+
+    this.onClickEdit = function() {
+        this.editor.style.display = 'block';
+        this.display.style.display = 'none';
+        this.controls.edit.style.disabled = true;
+        var keys = ["done", "load", "save", "export"];
+        for (var i = 0; i < keys.length; i++) {
+            this.controls[keys[i]].style.disabled = false;
+        }
+        this.onEdit();
+    };
+
+    this.onClickDone = function() {
+        this.editor.style.display = 'none';
+        this.display.style.display = 'block';
+        this.controls.edit.style.disabled = true;
+        var keys = ["done", "load", "save", "export"];
+        for (var i = 0; i < keys.length; i++) {
+            this.controls[keys[i]].style.disabled = false;
+        }
+        this.onDone();
+    };
+
+    this.onEdit = function() {
+    };
+
+    /*
+     * Override this to load it into the controller
+     */
+    this.onDone = function() {
     };
 
     /*
@@ -119,25 +160,5 @@ yoob.SourceManager = function() {
             localStorage.clear();
             //alert(localStorage.length);
         }
-    };
-
-    this.makeButtonPanel = function(container) {
-        var buttonPanel = document.createElement('div');
-        container.appendChild(buttonPanel);
-        var $this = this;
-        var makeButton = function(action) {
-            var button = document.createElement('button');
-            button.innerHTML = action; // TODO: capitalize
-            button.style.width = "5em";
-            buttonPanel.appendChild(button);
-            button.onclick = $this._makeEventHandler(button, action);
-            $this.controls[action] = button;
-            return button;
-        };
-        var keys = ["start", "stop", "step", "load", "edit", "reset"];
-        for (var i = 0; i < keys.length; i++) {
-            makeButton(keys[i]);
-        }
-        return buttonPanel;
     };
 };

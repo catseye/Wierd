@@ -74,16 +74,12 @@ yoob.Controller = function() {
     this.speed = undefined;
     this.controls = {};
 
-    /*
-     * This is not a public method.
-     */
-    this._makeEventHandler = function(control, action) {
-        if (this['click_' + action] !== undefined) {
+    var _makeEventHandler = function(controller, control, action) {
+        if (controller['click_' + action] !== undefined) {
             action = 'click_' + action;
         }
-        var $this = this;
         return function(e) {
-            $this[action](control);
+            controller[action](control);
         };
     };
 
@@ -122,7 +118,7 @@ yoob.Controller = function() {
                 value = document.getElementById(value);
             }
             if (value) {
-                value.onclick = this._makeEventHandler(value, key);
+                value.onclick = _makeEventHandler(this, value, key);
                 this.controls[key] = value;
             }
         }
@@ -333,10 +329,10 @@ yoob.Controller = function() {
         var $this = this;
         var makeButton = function(action) {
             var button = document.createElement('button');
-            button.innerHTML = action; // TODO: capitalize
+            button.innerHTML = action.charAt(0).toUpperCase() + action.slice(1);
             button.style.width = "5em";
             buttonPanel.appendChild(button);
-            button.onclick = $this._makeEventHandler(button, action);
+            button.onclick = _makeEventHandler($this, button, action);
             $this.controls[action] = button;
             return button;
         };
