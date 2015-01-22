@@ -327,36 +327,6 @@ yoob.Controller = function() {
         this.delay = elem.max - elem.value;
     };
 
-    this.initLocalStorage = function() {
-        var supportsLocalStorage = (
-            window['localStorage'] !== undefined &&
-            window['localStorage'] !== null
-        );
-        /* this is all just demo-y for now */
-        if (supportsLocalStorage) {
-            // you will only get this from OTHER windows/tabs.
-            var onstorage = function(e) {
-                if (!e) { e = window.event; }
-                alert(e.key + ',' + e.oldValue + ',' + e.newValue + e.url);
-            };
-            if (window.addEventListener) {
-              window.addEventListener("storage", onstorage, false);
-            } else {
-              window.attachEvent("onstorage", onstorage);
-            }
-        
-            localStorage.setItem('foo', 'bar');
-            //alert(localStorage.getItem('foo'));
-            //alert(localStorage.length);
-            localStorage.removeItem('foo');
-            //alert(localStorage.length);
-            localStorage.setItem('foo', 'bar');
-            //alert(localStorage.key(0));
-            localStorage.clear();
-            //alert(localStorage.length);
-        }
-    };
-
     this.makeButtonPanel = function(container) {
         var buttonPanel = document.createElement('div');
         container.appendChild(buttonPanel);
@@ -376,5 +346,4 @@ yoob.Controller = function() {
         }
         return buttonPanel;
     };
-
 };
