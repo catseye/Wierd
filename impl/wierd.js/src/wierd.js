@@ -59,13 +59,7 @@ function launch(prefix, container, config) {
                 outputElem: outputElem
             });
 
-            var buttonPanel = c.makeButtonPanel(controlPanel);
-            yoob.makeSpan(buttonPanel, "Speed:");
-            var speedControl = yoob.makeSlider(buttonPanel, 0, 200, 100);
-
-            c.connect({
-                'speed': speedControl,
-            });
+            var buttonPanel = c.makePanel(controlPanel);
 
             /* --- source manager --- */
 

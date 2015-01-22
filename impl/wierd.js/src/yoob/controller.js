@@ -225,21 +225,21 @@ yoob.Controller = function() {
 
     /*
      * Override this to change how the delay is acquired from the 'speed'
-     * element.
+     * control.
      */
     this.setDelayFrom = function(elem) {
-        this.delay = elem.max - elem.value;
+        this.delay = elem.max - elem.value; // parseInt(elem.value, 10)
     };
 
-    this.makeButtonPanel = function(container) {
-        var buttonPanel = document.createElement('div');
-        container.appendChild(buttonPanel);
+    this.makePanel = function(container) {
+        var panel = document.createElement('div');
+        container.appendChild(panel);
         var $this = this;
         var makeButton = function(action) {
             var button = document.createElement('button');
             button.innerHTML = action.charAt(0).toUpperCase() + action.slice(1);
             button.style.width = "5em";
-            buttonPanel.appendChild(button);
+            panel.appendChild(button);
             button.onclick = _makeEventHandler($this, button, action);
             $this.controls[action] = button;
             return button;
@@ -248,6 +248,23 @@ yoob.Controller = function() {
         for (var i = 0; i < keys.length; i++) {
             makeButton(keys[i]);
         }
-        return buttonPanel;
+
+        var slider = document.createElement('input');
+        slider.type = "range";
+        slider.min = 0;
+        slider.max = 200;
+        slider.value = 100;
+        slider.onchange = function(e) {
+            $this.setDelayFrom(slider);
+            if ($this.intervalId !== undefined) {
+                $this.stop();
+                $this.start();
+            }
+        };
+
+        panel.appendChild(slider);
+        $this.controls.speed = slider;
+
+        return panel;
     };
 };
