@@ -32,6 +32,7 @@ function launch(prefix, container, config) {
 
             var statePanel = yoob.makeDiv(viewPort);
             statePanel.style.display = 'inline-block';
+            statePanel.style.verticalAlign = 'top';
             yoob.makeSpan(statePanel, "Stack:");
             var stackDisplay = yoob.makeCanvas(statePanel, 400, 100);
             yoob.makeLineBreak(statePanel);
@@ -47,8 +48,9 @@ function launch(prefix, container, config) {
 
             /* --- controller --- */
 
-            WierdController.prototype = new yoob.Controller();
-            var c = new WierdController();
+            var proto = new yoob.Controller();
+            WierdController.prototype = proto;
+            var c = new WierdController(proto);
             var v = new yoob.PlayfieldCanvasView;
             v.init(null, canvas);
             v.setCellDimensions(undefined, 6);
@@ -92,7 +94,7 @@ function launch(prefix, container, config) {
     }
 }
 
-function WierdController() {
+function WierdController(proto) {
     var intervalId;
 
     var pf;
@@ -101,6 +103,8 @@ function WierdController() {
     var output;
 
     this.init = function(cfg) {
+        proto.init.apply(this, [cfg]);
+
         pf = new yoob.Playfield();
         ip = new yoob.Cursor().init(1, 1, 1, 1);
         stack = new yoob.Stack();

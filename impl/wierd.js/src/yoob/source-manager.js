@@ -11,23 +11,19 @@ if (window.yoob === undefined) yoob = {};
  * which is mutually exclusive, UI-wise, with the run/animation interface.
  */
 yoob.SourceManager = function() {
-    this.editor = undefined;
-    this.display = undefined;
-    this.panel = undefined;
-
     /*
      * editor: an element (usually a textarea) which stores the source code
      * display: an element which contains the animation/controller
      * panelContainer: an element into which to add the created button panel
-     * (if you do not give this, you will need to do something with this.panel)
+     * (if you do not give this, no panel will be created.  You're on your own.)
      * onDone: if given, if a function, it becomes the onDone method on this
      */
     this.init = function(cfg) {
         this.editor = cfg.editor;
         this.display = cfg.display;
         this.controls = {};
-        this.panel = this.makePanel();
         if (cfg.panelContainer) {
+            this.panel = this.makePanel();
             cfg.panelContainer.appendChild(this.panel);
         }
         if (cfg.onDone) {
