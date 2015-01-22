@@ -19,6 +19,8 @@ yoob.SourceManager = function() {
      * editor: an element (usually a textarea) which stores the source code
      * display: an element which contains the animation/controller
      * panelContainer: an element into which to add the created button panel
+     * (if you do not give this, you will need to do something with this.panel)
+     * onDone: if given, if a function, it becomes the onDone method on this
      */
     this.init = function(cfg) {
         this.editor = cfg.editor;
@@ -27,6 +29,9 @@ yoob.SourceManager = function() {
         this.panel = this.makePanel();
         if (cfg.panelContainer) {
             cfg.panelContainer.appendChild(this.panel);
+        }
+        if (cfg.onDone) {
+            this.onDone = cfg.onDone;
         }
         this.onClickDone();
         return this;
@@ -92,7 +97,7 @@ yoob.SourceManager = function() {
      */
     this.loadSource = function(text) {
         this.editor.value = text;
-        if (this.onload) this.onload(text);
+        this.onDone();
     };
 
     /*

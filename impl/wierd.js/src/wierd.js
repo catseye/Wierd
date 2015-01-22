@@ -65,17 +65,17 @@ function launch(prefix, container, config) {
 
             c.connect({
                 'speed': speedControl,
-                'source': editor,
-                'display': viewPort
             });
-            c.click_load();
 
             /* --- source manager --- */
 
             var sm = (new yoob.SourceManager()).init({
                 'editor': editor,
                 'display': viewPort,
-                'panelContainer': controlPanel
+                'panelContainer': controlPanel,
+                'onDone': function() {
+                              c.load(this.editor.value);
+                          }
             });
 
             /* --- presets --- */
@@ -88,7 +88,8 @@ function launch(prefix, container, config) {
             });
             var setPreset = function(n) {
                 c.click_stop(); // in case it is currently running
-                c.loadSourceFromURL('../../../eg/' + n);
+                sm.loadSourceFromURL('../../../eg/' + n);
+                sm.onDone();
             };
             p.add('hello.w', setPreset);
             p.select('hello.w');

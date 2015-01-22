@@ -18,23 +18,9 @@ if (window.yoob === undefined) yoob = {};
  *   - stop
  *   - step
  *   - load
- *   - edit
  *   - reset
  *
  * - a slider control which adjusts the speed of program state evolution.
- *
- * - a `source` element from which an program state can be loaded,
- *   and which is generally assumed to support user-editing of the source.
- *   The `edit` button will cause the `source` to be shown and the `display`
- *   to be hidden, while the `load` button will load the program state from
- *   the `source`, hide the `source`, and show the `display`.
- *
- * - a `display` element on which the current program state will be
- *   depicted.  Note that the controller is not directly responsible for
- *   rendering the program state; use something like yoob.PlayfieldCanvasView
- *   for that instead.  The controller only knows about the `display` in order
- *   to hide it while the `source` is being edited and to show it after the
- *   `source` has been loaded.
  *
  * - an `input` element, which provides input to the running program.
  *
@@ -67,9 +53,7 @@ yoob.Controller = function() {
     this.delay = 100;
     this.state = STOPPED;
 
-    this.source = undefined;
     this.input = undefined;
-    this.display = undefined;
 
     this.speed = undefined;
     this.controls = {};
@@ -110,7 +94,7 @@ yoob.Controller = function() {
     this.connect = function(dict) {
         var $this = this;
 
-        var keys = ["start", "stop", "step", "load", "edit", "reset"];
+        var keys = ["start", "stop", "step", "reset"];
         for (var i in keys) {
             var key = keys[i];
             var value = dict[key];
@@ -123,7 +107,7 @@ yoob.Controller = function() {
             }
         }
 
-        var keys = ["speed", "source", "input", "display"];
+        var keys = ["speed", "input"];
         for (var i in keys) {
             var key = keys[i];
             var value = dict[key];
@@ -155,22 +139,15 @@ yoob.Controller = function() {
         this.click_stop();
     };
 
+    this.load = function(text) {
+        alert("load() NotImplementedError");
+    };
+
     this.click_step = function(e) {
         if (this.state === STOPPED) return;
         this.click_stop();
         this.state = PAUSED;
         this.performStep();
-    };
-
-    /*
-     * Override this and make it evolve the program state by one tick.
-     * The method may also return a control code string:
-     *
-     * - `stop` to indicate that the program has terminated.
-     * - `block` to indicate that the program is waiting for more input.
-     */
-    this.step = function() {
-        alert("step() NotImplementedError");
     };
 
     this.performStep = function() {
@@ -182,84 +159,15 @@ yoob.Controller = function() {
         }
     };
 
-    this.click_load = function(e) {
-        this.click_stop();
-        this.load(this.source.value);
-        this.state = PAUSED;
-        if (this.controls.edit) this.controls.edit.style.display = "inline";
-        if (this.controls.load) this.controls.load.style.display = "none";
-        if (this.controls.start) this.controls.start.disabled = false;
-        if (this.controls.step) this.controls.step.disabled = false;
-        if (this.controls.stop) this.controls.stop.disabled = true;
-        if (this.controls.reset) this.controls.reset.disabled = false;
-        if (this.display) this.display.style.display = "block";
-        if (this.source) this.source.style.display = "none";
-    };
-
-    this.load = function(text) {
-        alert("load() NotImplementedError");
-    };
-
     /*
-     * Loads a source text into the source element.
+     * Override this and make it evolve the program state by one tick.
+     * The method may also return a control code string:
+     *
+     * - `stop` to indicate that the program has terminated.
+     * - `block` to indicate that the program is waiting for more input.
      */
-    this.loadSource = function(text) {
-        if (this.source) this.source.value = text;
-        this.load(text);
-        this.state = PAUSED;
-    };
-
-    /*
-     * Loads a source text into the source element.
-     * Assumes it comes from an element in the document, so it translates
-     * the basic HTML escapes (but no others) to plain text.
-     */
-    this.loadSourceFromHTML = function(html) {
-        var text = html;
-        text = text.replace(/\&lt;/g, '<');
-        text = text.replace(/\&gt;/g, '>');
-        text = text.replace(/\&amp;/g, '&');
-        this.loadSource(text);
-    };
-
-    /*
-     * This is the basic idea, but not fleshed out yet.
-     * - Should we cache the source somewhere?
-     * - While we're waiting, should we disable the UI / show a spinny?
-     */
-    this.loadSourceFromURL = function(url, errorCallback) {
-        var http = new XMLHttpRequest();
-        var $this = this;
-        if (!errorCallback) {
-            errorCallback = function(http) {
-                $this.loadSource(
-                    "Error: could not load " + url + ": " + http.statusText
-                );
-            }
-        }
-        http.open("get", url, true);
-        http.onload = function(e) {
-            if (http.readyState === 4 && http.responseText) {
-                if (http.status === 200) {
-                    $this.loadSource(http.responseText);
-                } else {
-                    errorCallback(http);
-                }
-            }
-        };
-        http.send(null);
-    };
-
-    this.click_edit = function(e) {
-        this.click_stop();
-        if (this.controls.edit) this.controls.edit.style.display = "none";
-        if (this.controls.load) this.controls.load.style.display = "inline";
-        if (this.controls.start) this.controls.start.disabled = true;
-        if (this.controls.step) this.controls.step.disabled = true;
-        if (this.controls.stop) this.controls.stop.disabled = true;
-        if (this.controls.reset) this.controls.reset.disabled = true;
-        if (this.display) this.display.style.display = "none";
-        if (this.source) this.source.style.display = "block";
+    this.step = function() {
+        alert("step() NotImplementedError");
     };
 
     this.click_start = function(e) {
@@ -309,7 +217,7 @@ yoob.Controller = function() {
 
     this.click_reset = function(e) {
         this.click_stop();
-        this.load(this.source.value);
+        // this.load(this.source.value);
         if (this.controls.start) this.controls.start.disabled = false;
         if (this.controls.step) this.controls.step.disabled = false;
         if (this.controls.stop) this.controls.stop.disabled = true;
@@ -336,7 +244,7 @@ yoob.Controller = function() {
             $this.controls[action] = button;
             return button;
         };
-        var keys = ["start", "stop", "step", "load", "edit", "reset"];
+        var keys = ["start", "stop", "step", "load", "reset"];
         for (var i = 0; i < keys.length; i++) {
             makeButton(keys[i]);
         }
