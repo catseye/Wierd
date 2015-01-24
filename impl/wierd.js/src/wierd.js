@@ -8,7 +8,7 @@ function launch(prefix, container, config) {
     var deps = [
         "controller.js",
         "playfield.js",
-        "playfield-canvas-view.js",
+        "playfield-html-view.js",
         "cursor.js",
         "stack.js",
         "element-factory.js",
@@ -27,8 +27,9 @@ function launch(prefix, container, config) {
             /* --- state animation display --- */
 
             var viewPort = yoob.makeDiv(container);
-            var canvas = yoob.makeCanvas(viewPort, 400, 400);
-            canvas.style.display = 'inline-block';
+
+            var programDisplay = yoob.makePre(viewPort);
+            programDisplay.style.display = 'inline-block';
 
             var statePanel = yoob.makeDiv(viewPort);
             statePanel.style.display = 'inline-block';
@@ -51,8 +52,8 @@ function launch(prefix, container, config) {
             var proto = new yoob.Controller();
             WierdController.prototype = proto;
             var c = new WierdController(proto);
-            var v = new yoob.PlayfieldCanvasView;
-            v.init(null, canvas);
+            var v = new yoob.PlayfieldHTMLView;
+            v.init(null, programDisplay);
             v.setCellDimensions(undefined, 6);
             c.init({
                 panelContainer: controlPanel,
@@ -107,8 +108,7 @@ function WierdController(proto) {
         pf = new yoob.Playfield();
         ip = new yoob.Cursor().init(1, 1, 1, 1);
         stack = new yoob.Stack();
-        cfg.playfieldView.pf = pf; // setPlayfield, surely?
-        this.view = cfg.playfieldView.setCursors([ip]);
+        this.view = cfg.playfieldView.setPlayfield(pf).setCursors([ip]);
         output = cfg.outputElem;
         this.stackCanvas = cfg.stackCanvas;
         this.inputElem = cfg.inputElem;

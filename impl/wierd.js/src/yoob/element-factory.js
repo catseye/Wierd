@@ -1,5 +1,5 @@
 /*
- * This file is part of yoob.js version 0.7
+ * This file is part of yoob.js version 0.8-PRE
  * Available from https://github.com/catseye/yoob.js/
  * This file is in the public domain.  See http://unlicense.org/ for details.
  */
@@ -95,6 +95,13 @@ yoob.makeDiv = function(container, innerHTML) {
     div.innerHTML = innerHTML || '';
     container.appendChild(div);
     return div;
+};
+
+yoob.makePre = function(container, innerHTML) {
+    var elem = document.createElement('pre');
+    elem.innerHTML = innerHTML || '';
+    container.appendChild(elem);
+    return elem;
 };
 
 yoob.makePanel = function(container, title, isOpen) {
