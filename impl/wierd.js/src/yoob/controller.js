@@ -29,7 +29,7 @@ if (window.yoob === undefined) yoob = {};
  * To use a Controller, create a subclass of yoob.Controller and override
  * the following methods:
  * - make it evolve the state by one tick in the step() method
- * - make it load the state from a multiline string in the load() method
+ * - make it load the initial state from a string in the reset(s) method
  *
  * In these methods, you will need to store the state (in whatever
  * representation you find convenient for processing and for depicting on
@@ -45,23 +45,33 @@ if (window.yoob === undefined) yoob = {};
  *
  * Some theory of operation:
  *
- * When the button associated with e.g. 'start' is clicked,
- * the corresponding method (in this case, 'click_start()')
- * on this Controller will be called.  These functions are
- * responsible for changing the state of the Controller (both
- * the internal state, and the enabled status, etc. of the
- * controls), and for calling other methods on the Controller
- * to implement the particulars of the action.
+ * For every action 'foo', three methods are exposed on the yoob.Controller
+ * object:
  *
- * For example, 'click_step()' calls 'performStep()' which
- * calls 'step()' (which a subclass or instantiator must
- * provide an implementation for.)
+ * - clickFoo
  *
- * To simulate one of the buttons being clicked, you may
- * call 'click_foo()' yourself in code.  However, that will
- * be subject to the current restrictions of the interface.
- * You may be better off calling one of the "internal" methods
- * like 'performStep()'.
+ *   Called when the button associated button is clicked.
+ *   Client code may call this method to simulate the button having been
+ *   clicked, including respecting and changing the state of the buttons panel.
+ *
+ * - performFoo
+ *
+ *   Called by clickFoo to request the 'foo' action be performed.
+ *   Responsible also for any Controller-related housekeeping involved with
+ *   the 'foo' action.  Client code may call this method when it wants the
+ *   controller to perform this action without respecting or changing the
+ *   state of the button panel.
+ *
+ * - foo
+ *
+ *   Overridden (if necessary) by a subclass, or supplied by an instantiator,
+ *   of yoob.Controller to implement some action.  In particular, 'step' needs
+ *   to be implemented this way.  Client code should not call these methods
+ *   directly.
+ *
+ * The clickFoo methods take one argument, an event structure.  None of the
+ * other functions take an argument, with the exception of performReset() and
+ * reset(), which take a single argument, the text-encoded state to reset to.
  */
 yoob.Controller = function() {
     var STOPPED = 0;   // the program has terminated (itself)
@@ -77,6 +87,7 @@ yoob.Controller = function() {
         this.delay = 100;
         this.state = STOPPED;
         this.controls = {};
+        this.resetState = undefined;
         if (cfg.panelContainer) {
             this.panel = this.makePanel();
             cfg.panelContainer.appendChild(this.panel);
@@ -84,29 +95,30 @@ yoob.Controller = function() {
         return this;
     };
 
-    this.makePanel = function(container) {
+    /******************
+     * UI
+     */
+    this.makePanel = function() {
         var panel = document.createElement('div');
-        container.appendChild(panel);
         var $this = this;
 
-        var makeEventHandler = function(control, action) {
-            if ($this['click_' + action] !== undefined) {
-                action = 'click_' + action;
-            }
+        var makeEventHandler = function(control, upperAction) {
             return function(e) {
-                $this[action](control);
+                $this['click' + upperAction](control);
             };
         };
 
         var makeButton = function(action) {
             var button = document.createElement('button');
-            button.innerHTML = action.charAt(0).toUpperCase() + action.slice(1);
+            var upperAction = action.charAt(0).toUpperCase() + action.slice(1);
+            button.innerHTML = upperAction;
             button.style.width = "5em";
             panel.appendChild(button);
-            button.onclick = makeEventHandler(button, action);
+            button.onclick = makeEventHandler(button, upperAction);
             $this.controls[action] = button;
             return button;
         };
+
         var keys = ["start", "stop", "step", "reset"];
         for (var i = 0; i < keys.length; i++) {
             makeButton(keys[i]);
@@ -141,13 +153,20 @@ yoob.Controller = function() {
         }
     };
 
-    this.load = function(text) {
-        alert("load() NotImplementedError");
+    /*
+     * Override this to change how the delay is acquired from the 'speed'
+     * control.
+     */
+    this.setDelayFrom = function(elem) {
+        this.delay = elem.max - elem.value; // parseInt(elem.value, 10)
     };
 
-    this.click_step = function(e) {
+    /******************
+     * action: Step
+     */
+    this.clickStep = function(e) {
         if (this.state === STOPPED) return;
-        this.click_stop();
+        this.clickStop();
         this.state = PAUSED;
         this.performStep();
     };
@@ -155,7 +174,8 @@ yoob.Controller = function() {
     this.performStep = function() {
         var code = this.step();
         if (code === 'stop') {
-            this.terminate();
+            this.clickStop();
+            this.state = STOPPED;
         } else if (code === 'block') {
             this.state = BLOCKED;
         }
@@ -172,17 +192,24 @@ yoob.Controller = function() {
         alert("step() NotImplementedError");
     };
 
-    this.click_start = function(e) {
-        this.start();
+    /******************
+     * action: Start
+     */
+    this.clickStart = function(e) {
+        this.performStart();
         if (this.controls.start) this.controls.start.disabled = true;
         if (this.controls.step) this.controls.step.disabled = false;
         if (this.controls.stop) this.controls.stop.disabled = false;
     };
 
+    this.performStart = function() {
+        this.start();
+    };
+
     this.start = function() {
         if (this.intervalId !== undefined)
             return;
-        this.step();
+        this.performStep();
         var $this = this;
         this.intervalId = setInterval(function() {
             $this.performStep();
@@ -190,24 +217,19 @@ yoob.Controller = function() {
         this.state = RUNNING;
     };
 
-    this.click_stop = function(e) {
-        this.stop();
-        this.state = PAUSED;
-        /* why is this check here? ... */
-        if (this.controls.stop && this.controls.stop.disabled) {
-            return;
-        }
+    /******************
+     * action: Stop
+     */
+    this.clickStop = function(e) {
+        this.performStop();
         if (this.controls.start) this.controls.start.disabled = false;
         if (this.controls.step) this.controls.step.disabled = false;
         if (this.controls.stop) this.controls.stop.disabled = true;
     };
 
-    this.terminate = function(e) {
+    this.performStop = function() {
         this.stop();
-        this.state = STOPPED;
-        if (this.controls.start) this.controls.start.disabled = true;
-        if (this.controls.step) this.controls.step.disabled = true;
-        if (this.controls.stop) this.controls.stop.disabled = true;
+        this.state = PAUSED;
     };
 
     this.stop = function() {
@@ -217,19 +239,25 @@ yoob.Controller = function() {
         this.intervalId = undefined;
     };
 
-    this.click_reset = function(e) {
-        this.click_stop();
-        // this.load(this.source.value);
+    /******************
+     * action: Reset
+     */
+    this.clickReset = function(e) {
+        this.clickStop();
+        this.performReset();
         if (this.controls.start) this.controls.start.disabled = false;
         if (this.controls.step) this.controls.step.disabled = false;
         if (this.controls.stop) this.controls.stop.disabled = true;
     };
 
-    /*
-     * Override this to change how the delay is acquired from the 'speed'
-     * control.
-     */
-    this.setDelayFrom = function(elem) {
-        this.delay = elem.max - elem.value; // parseInt(elem.value, 10)
+    this.performReset = function(state) {
+        if (state !== undefined) {
+            this.resetState = state;
+        }
+        this.reset(this.resetState);
+    };
+
+    this.reset = function(state) {
+        alert("reset() NotImplementedError");
     };
 };

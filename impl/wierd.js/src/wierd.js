@@ -55,13 +55,12 @@ function launch(prefix, container, config) {
             v.init(null, canvas);
             v.setCellDimensions(undefined, 6);
             c.init({
+                panelContainer: controlPanel,
                 playfieldView: v,
                 stackCanvas: stackDisplay,
                 inputElem: inputElem,
                 outputElem: outputElem
             });
-
-            var buttonPanel = c.makePanel(controlPanel);
 
             /* --- source manager --- */
 
@@ -70,20 +69,20 @@ function launch(prefix, container, config) {
                 'display': viewPort,
                 'panelContainer': controlPanel,
                 'onDone': function() {
-                              c.load(this.editor.value);
+                              c.performReset(this.editor.value);
                           }
             });
 
             /* --- presets --- */
 
-            var presetSelect = yoob.makeSelect(buttonPanel, "Preset:", []);
+            var presetSelect = yoob.makeSelect(controlPanel, "Preset:", []);
             var p = new yoob.PresetManager();
             p.init({
                 'selectElem': presetSelect,
                 'controller': c,
             });
             var setPreset = function(n) {
-                c.click_stop(); // in case it is currently running
+                c.clickStop(); // in case it is currently running
                 sm.loadSourceFromURL('../../../eg/' + n);
                 sm.onDone();
             };
@@ -199,7 +198,7 @@ function WierdController(proto) {
         stack.drawCanvas(this.stackCanvas, 10, 10);
     };
 
-    this.load = function(text) {
+    this.reset = function(text) {
         pf.clear();
         stack = new yoob.Stack();
         pf.load(1, 1, text);
