@@ -67,7 +67,8 @@ function launch(prefix, container, config) {
 
             var sm = (new yoob.SourceManager()).init({
                 'editor': editor,
-                'display': viewPort,
+                'hideDuringEdit': [viewPort],
+                'disableDuringEdit': [c.panel],
                 'storageKey': 'wierd.js',
                 'panelContainer': controlPanel,
                 'onDone': function() {
@@ -77,7 +78,8 @@ function launch(prefix, container, config) {
 
             /* --- presets --- */
 
-            var presetSelect = yoob.makeSelect(controlPanel, "Preset:", []);
+            var presetSelect = yoob.makeSelect(c.panel, "Preset:", []);
+
             var p = new yoob.PresetManager();
             p.init({
                 'selectElem': presetSelect,

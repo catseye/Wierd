@@ -13,7 +13,9 @@ if (window.yoob === undefined) yoob = {};
 yoob.SourceManager = function() {
     /*
      * editor: an element (usually a textarea) which stores the source code
-     * display: an element which contains the animation/controller
+     * hideDuringEdit: a list of elements which will be hidden when editing
+     * (typically this will be the animation display of a yoob.Controller)
+     * disableDuringEdit: a list of elements which will be disabled when editing
      * storageKey: key under which sources will be saved/loaded from localStorage
      * panelContainer: an element into which to add the created button panel
      * (if you do not give this, no panel will be created.  You're on your own.)
@@ -25,7 +27,12 @@ yoob.SourceManager = function() {
             window['localStorage'] !== null
         );
         this.editor = cfg.editor;
-        this.display = cfg.display;
+        this.hideDuringEdit = cfg.hideDuringEdit;
+        this.prevDisplay = {};
+        for (var i = 0; i < this.hideDuringEdit.length; i++) {
+            this.prevDisplay[this.hideDuringEdit[i]] = this.hideDuringEdit[i].display;
+        }
+        this.disableDuringEdit = cfg.disableDuringEdit;
         this.storageKey = cfg.storageKey || 'default';
         this.controls = {};
         if (cfg.panelContainer) {
@@ -63,8 +70,18 @@ yoob.SourceManager = function() {
     };
 
     this.clickEdit = function() {
+        var hde = this.hideDuringEdit;
+        for (var i = 0; i < hde.length; i++) {
+            this.prevDisplay[hde[i]] = hde[i].style.display;
+            hde[i].style.display = 'none';
+        }
+        for (var i = 0; i < this.disableDuringEdit.length; i++) {
+            this.disableDuringEdit[i].disabled = true;
+            /* But if it's not a form control, disabled is meaningless. */
+            this.disableDuringEdit[i].style.pointerEvents = 'none';
+            this.disableDuringEdit[i].style.opacity = '0.5';
+        }
         this.editor.style.display = 'block';
-        this.display.style.display = 'none';
         this.controls.edit.disabled = true;
         var keys = ["done", "load", "save"];
         for (var i = 0; i < keys.length; i++) {
@@ -74,8 +91,17 @@ yoob.SourceManager = function() {
     };
 
     this.clickDone = function() {
+        var hde = this.hideDuringEdit;
+        for (var i = 0; i < hde.length; i++) {
+            hde[i].style.display = this.prevDisplay[hde[i]];
+        }
+        for (var i = 0; i < this.disableDuringEdit.length; i++) {
+            this.disableDuringEdit[i].disabled = false;
+            /* But if it's not a form control, disabled is meaningless. */
+            this.disableDuringEdit[i].style.pointerEvents = 'auto';
+            this.disableDuringEdit[i].style.opacity = '1.0';
+        }
         this.editor.style.display = 'none';
-        this.display.style.display = 'block';
         this.controls.edit.disabled = false;
         var keys = ["done", "load", "save"];
         for (var i = 0; i < keys.length; i++) {
