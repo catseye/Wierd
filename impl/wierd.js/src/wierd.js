@@ -68,6 +68,7 @@ function launch(prefix, container, config) {
             var sm = (new yoob.SourceManager()).init({
                 'editor': editor,
                 'display': viewPort,
+                'storageKey': 'wierd.js',
                 'panelContainer': controlPanel,
                 'onDone': function() {
                               c.performReset(this.editor.value);
