@@ -72,8 +72,8 @@ function launch(prefix, container, config) {
                 'storageKey': 'wierd.js',
                 'panelContainer': controlPanel,
                 'onDone': function() {
-                              c.performReset(this.editor.value);
-                          }
+                    c.performReset(this.getEditorText());
+                }
             });
 
             /* --- presets --- */
@@ -83,14 +83,13 @@ function launch(prefix, container, config) {
             var p = new yoob.PresetManager();
             p.init({
                 'selectElem': presetSelect,
-                'controller': c,
+                'setPreset': function(n) {
+                    c.clickStop(); // in case it is currently running
+                    sm.loadSourceFromURL('../../../eg/' + n);
+                    sm.onDone();
+                }
             });
-            var setPreset = function(n) {
-                c.clickStop(); // in case it is currently running
-                sm.loadSourceFromURL('../../../eg/' + n);
-                sm.onDone();
-            };
-            p.add('hello.w', setPreset);
+            p.add('hello.w');
             p.select('hello.w');
         };
         document.body.appendChild(elem);

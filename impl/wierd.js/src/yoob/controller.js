@@ -82,6 +82,8 @@ yoob.Controller = function() {
     /*
      * panelContainer: an element into which to add the created button panel
      * (if you do not give this, no panel will be created.  You're on your own.)
+     * step: if given, if a function, it becomes the step() method on this
+     * reset: if given, if a function, it becomes the reset() method on this
      */
     this.init = function(cfg) {
         this.delay = 100;
@@ -91,6 +93,12 @@ yoob.Controller = function() {
         if (cfg.panelContainer) {
             this.panel = this.makePanel();
             cfg.panelContainer.appendChild(this.panel);
+        }
+        if (cfg.step) {
+            this.step = cfg.step;
+        }
+        if (cfg.reset) {
+            this.reset = cfg.reset;
         }
         return this;
     };
