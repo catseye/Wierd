@@ -22,7 +22,7 @@ function launch(prefix, container, config) {
         elem.onload = function() {
             if (++loaded != deps.length) return;
 
-            var sourceRoot = config.sourceRoot || '../../../dialect/wierd-jnc/eg/';
+            var sourceRoot = config.sourceRoot || '../eg/';
 
             var controlPanel = config.controlPanel || container;
 

@@ -81,14 +81,27 @@ I have tended to call them "John's Wierd" and "Milo's Wierd" in the
 past, but anything else that distinguishes them by the name of their author
 would suffice.  (Therefore there are subdirectories `dialect/wierd-jnc` and
 `dialect/wierd-mvh` in this repository, and each of *those* contains the
-standard `src`, `doc`, and `eg` subdirectories.)
-
-Meanwhile, Chris Pressey's Javascript interpreter hopes to implement *both*
-Wierd dialects.  (Therefore it is an implementation in the `impl` directory
-in the *root* of this repository.)
+standard `src`, `doc`, and `eg` subdirectories.  And in addition, because
+Chris's interpreter implements John's Wierd, it is in the `impl` directory
+of `dialect/wierd-jnc`.)
 
 And in light of all this, it might also be acceptable to consider Wierd to be
 a language *family* rather than a language.  I'm not yet decided on this point.
+
+### Pull Requests ###
+
+You are perfectly welcome to open pull requests on this repository, but please
+observe the layout described above:
+
+*   implementations of John's Wierd go into `dialect/wierd-jnc/impl`
+*   example programs in John's Wierd go into `dialect/wierd-jnc/eg`
+*   implementations of Milo's Wierd go into `dialect/wierd-mvh/impl`
+*   example programs in Milo's Wierd go into `dialect/wierd-mvh/eg`
+*   any other dialects of Wierd go into `dialect/your-dialect-name`
+
+In light of the following section, I would also ask that you provide some
+license information regarding any sources you submit.  Open-source licensing
+would definitely be preferable.
 
 License
 -------
@@ -106,5 +119,5 @@ the authors, so I think it's safe to consider them to be freely
 redistributable, unmodified and for non-commercial purposes; however, I am
 not a lawyer, your mileage may vary, caveat emptor, etc. etc.
 
-In stark (I hope) contrast to this, Chris's implementation, `wierd.js`, is
+In stark (I hope) contrast to this, Chris's implementation, `wierd-jnc.js`, is
 placed into the public domain (see the file `UNLICENSE` in its directory.)
