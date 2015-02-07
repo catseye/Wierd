@@ -24,18 +24,26 @@ function launch(prefix, container, config) {
 
             var sourceRoot = config.sourceRoot || '../eg/';
 
-            var controlPanel = config.controlPanel || container;
+            var controlPanel = config.controlPanel;
+            if (!controlPanel) {
+                controlPanel = yoob.makeDiv(container);
+                controlPanel.style.textAlign = 'left';
+            }
 
             /* --- state animation display --- */
 
             var viewPort = yoob.makeDiv(container);
+            viewPort.style.textAlign = 'left';
 
             var programDisplay = yoob.makePre(viewPort);
             programDisplay.style.display = 'inline-block';
+            programDisplay.style.fontSize = "6px";
+            programDisplay.style.lineHeight = "6px";
 
             var statePanel = yoob.makeDiv(viewPort);
             statePanel.style.display = 'inline-block';
             statePanel.style.verticalAlign = 'top';
+            statePanel.style.textAlign = 'left';
             yoob.makeSpan(statePanel, "Stack:");
             var stackDisplay = yoob.makeCanvas(statePanel, 400, 100);
             yoob.makeLineBreak(statePanel);
@@ -46,8 +54,9 @@ function launch(prefix, container, config) {
             var outputElem = yoob.makeDiv(statePanel);
             yoob.makeLineBreak(statePanel);
 
-            var editor = yoob.makeTextArea(container, 160, 50);
+            var editor = yoob.makeTextArea(container, 160, 80);
             editor.style.fontSize = "6px";
+            editor.style.lineHeight = "6px";
 
             /* --- controller --- */
 
