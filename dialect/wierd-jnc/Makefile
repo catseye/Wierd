@@ -1,4 +1,4 @@
-PROGS=bin/wierd bin/wierd-milo
+PROGS=bin/wierd-jnc
 CC?=gcc
 
 WARNS=	-W -Wall -Wstrict-prototypes -Wmissing-prototypes \
@@ -18,20 +18,19 @@ ifdef DEBUG
   CFLAGS+= -g
 endif
 
+.PHONY: all clean distclean
+
 all: $(PROGS)
 
 bin/.empty:
 	mkdir -p bin
 	touch bin/.empty
 
-bin/wierd: bin/.empty src/wierd.c
-	$(CC) $(CFLAGS) src/wierd.c -o bin/wierd
-
-bin/wierd-milo: bin/.empty src/wierd-milo.c
-	$(CC) $(CFLAGS) src/wierd-milo.c -o bin/wierd-milo
+bin/wierd-jnc: bin/.empty src/wierd.c
+	$(CC) $(CFLAGS) src/wierd.c -o $@
 
 clean:
-	rm -f *.o src/*.o *.core
+	rm -f src/*.o *.core
 
-distclean:
+distclean: clean
 	rm -rf bin

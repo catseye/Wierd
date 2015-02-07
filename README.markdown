@@ -2,11 +2,10 @@ The Wierd Programming Language
 ==============================
 
 This is Cat's Eye Technologies' distribution of Wierd, a two-dimensional
-esoteric programming language (a "fungeoid".)  Unlike related languages,
-the symbols in a Wierd program do not determine which instructions are
-executed; instead, any symbols may be used to draw chains of symbols, and
-it is the *bends* in these chains which determine which instructions are
-executed.
+esoteric programming language (a "fungeoid".)  Unlike similar languages
+where the symbols in a program determine which instructions are executed,
+in Wierd, it is the *bends* in the chain of arbitrary symbols that determine
+which instructions are executed.
 
 History
 -------
@@ -14,45 +13,82 @@ History
 Wierd has a long and colourful history of language fuzziness.
 
 Wierd was originally designed by Ben Olmstead, John Colagioia, and Chris
-Pressey, in a three-way email discussion about how Befunge and Brainfuck
+Pressey, in a three-way email discussion about how [Befunge][] and [brainfuck][]
 could be combined in an interesting way.
 
-Based on this discussion, John wrote an implementation of Wierd in C
-(`wierd.c` in the `src` directory), and wrote a version of the classic
-"Hello, world!" program in Wierd (`hello.w` in the `eg` directory; see
-also his description of the program in `hellow.txt` in the `doc` directory.)
+Based on this discussion, John wrote an interpreter in C for his interpretation
+of Wierd, and wrote a version of the classic "Hello, world!" program which
+runs on his interpreter.
 
-Then, based largely on this implementation, John wrote a specification for
-the language (`wierdspec.txt` in the `doc` subdirectory.)
+Later on, based on his implementation, John wrote a specification for the
+language accepted by his interpreter, calling it Wierd.
 
-Later on, Milo van Handel also wrote an implementation (`wierd-milo.c`
-in `src`) and several example Wierd programs (in `eg` -- they're the ones
-described in `*.doc.txt` in `doc`) for it -- including a Wierd/INTERCAL
-polyglot (`polyglot.i`).
+Even later on, Milo van Handel (who was not privy to the email conversation)
+wrote an interpreter, also in C, for his interpretation of Wierd, which was
+apparenly based largely on John's interpreter and spec, but interpreting some
+conditions slightly differently, and filling in some gaps (such as treatment
+of EOF.)  Milo also wrote several example programs that run on his interpreter,
+including several versions of the classic `cat` program and a Wierd/INTERCAL
+polyglot.
 
-Unfortunately, Milo's interpreter has different semantics from John's
-interpreter -- from what I've been able to tell, the two programs implement
-largely incompatible languages.  It may be possible to write programs which
-work the same on both interpreters, but I'm pretty sure none of the included
-example programs do.
+Unfortunately, the language implemented by Milo's interpreter has different
+semantics from the language implemented by John's interpreter — and from what
+I've been able to tell, the two languages are largely incompatible.  It may of
+course be possible to write polyglot programs which are accepted by both
+interpreters, perhaps even having the same behaviour in both, but I'm pretty
+sure that none of the included example programs fall into this category.
 
-Milo's Wierd could reasonably be called "Wierd 2.0", but as far as I know,
-no one does.
-
-Later still, Chris attempted to implement the original Wierd in the
+Later still, Chris attempted to implement John's interpretation of Wierd in the
 [yoob][] framework, based on John's spec, but when trying to run `hello.w`
 on it, found that it would only get so far before entering an infinite loop
-(back and forth along the chain.)  This suggests a possible bug in either
+(back and forth along the chain.)  This suggested a possible bug in either
 the yoob implementation or in `wierd.c` or in the spec.
 
-Given all this, it is really doubtful that any of these implementations or
-documents can be considered normative.
-
-Chris also recently patched Milo's implementation to take standard long
-options, for portability (NetBSD doesn't have `getopt_long_only`.)  (Sorry
+Shortly after this, Chris also patched Milo's implementation to take standard
+long options, for portability (NetBSD doesn't have `getopt_long_only`.)  (Sorry
 Milo, hope you don't mind.)
 
+Shortly after *that*, Chris began writing an interpreter in Javascript of John's
+interpretation of Wierd, and discovered the source of the problems with his
+previous attempt: `hello.w` relies on incorrectly-documented behaviour.
+
+Specifically, while John's spec *and* the comments in John's interpreter say
+that during the "putget" operation, a zero value means "get" and a non-zero
+value means "put", in the implementation (on which `hello.w` relies), it is
+actually the other way around.
+
+[Befunge]: http://catseye.tc/node/Befunge-93
+[brainfuck]: http://esolangs.org/wiki/brainfuck
 [yoob]: http://catseye.tc/projects/yoob/
+
+### Given all this... ###
+
+Given all this, and given that the comments in John's interpreter explain
+some points about how it varies from "official" Wierd (the one in the email
+conversation)... well, here's how I see it.
+
+The name _Wierd_ refers to the language defined (however fuzzily) by that
+original email conversation.
+
+Given that that email thread is, as far as I know, lost and gone forever,
+Wierd has no specification, and no reference implementation.  (Therefore,
+there are no `src`, `doc`, or `eg` directories in the root directory of this
+repository.)
+
+Both John Colagioia and Milo van Handel designed and implemented _dialects_ of
+Wierd.  (Therefore there is a directory called `dialect` in this repository.)
+I have tended to call them "John's Wierd" and "Milo's Wierd" in the
+past, but anything else that distinguishes them by the name of their author
+would suffice.  (Therefore there are subdirectories `dialect/wierd-jnc` and
+`dialect/wierd-mvh` in this repository, and each of *those* contains the
+standard `src`, `doc`, and `eg` subdirectories.)
+
+Meanwhile, Chris Pressey's Javascript interpreter hopes to implement *both*
+Wierd dialects.  (Therefore it is an implementation in the `impl` directory
+in the *root* of this repository.)
+
+And in light of all this, it might also be acceptable to consider Wierd to be
+a language *family* rather than a language.  I'm not yet decided on this point.
 
 License
 -------
@@ -60,11 +96,15 @@ License
 The Wierd distribution's licensing matches the language's fuzziness.
 
 With the exception of Milo's `quine.w`, which is licensed under the GPL
-(no version specified), no license was ever explicitly placed on any of the
-sources, so they are all implicitly copyright by their respective authors.
+(no version specified), no license was ever explicitly placed on any of John's
+or Milo's sources or documentation, so they are all implicitly copyrighted by
+their respective authors.
 
 However, Cat's Eye Technologies has been redistributing these sources in
 the form of this Wierd distribution for years now, with no objections from
 the authors, so I think it's safe to consider them to be freely
 redistributable, unmodified and for non-commercial purposes; however, I am
 not a lawyer, your mileage may vary, caveat emptor, etc. etc.
+
+In stark (I hope) contrast to this, Chris's implementation, `wierd.js`, is
+placed into the public domain (see the file `UNLICENSE` in its directory.)
