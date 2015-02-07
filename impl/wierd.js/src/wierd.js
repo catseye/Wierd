@@ -22,6 +22,8 @@ function launch(prefix, container, config) {
         elem.onload = function() {
             if (++loaded != deps.length) return;
 
+            var sourceRoot = config.sourceRoot || '../../../dialect/wierd-jnc/eg/';
+
             var controlPanel = config.controlPanel || container;
 
             /* --- state animation display --- */
@@ -85,7 +87,7 @@ function launch(prefix, container, config) {
                 'selectElem': presetSelect,
                 'setPreset': function(n) {
                     c.clickStop(); // in case it is currently running
-                    sm.loadSourceFromURL('../../../eg/' + n);
+                    sm.loadSourceFromURL(sourceRoot + n);
                     sm.onDone();
                 }
             });
