@@ -52,6 +52,10 @@ function launch(prefix, container, config) {
             yoob.makeLineBreak(statePanel);
             yoob.makeSpan(statePanel, "Output:");
             var outputElem = yoob.makeDiv(statePanel);
+            outputElem.style.background = 'black';
+            outputElem.style.color = 'green';
+            outputElem.style.fontFamily = 'monospace';
+            outputElem.style.width = '100%';
             yoob.makeLineBreak(statePanel);
 
             var editor = yoob.makeTextArea(container, 160, 80);
