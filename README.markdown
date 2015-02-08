@@ -17,8 +17,9 @@ Pressey, in a three-way email discussion about how [Befunge][] and [brainfuck][]
 could be combined in an interesting way.
 
 Based on this discussion, John wrote an interpreter in C for his interpretation
-of Wierd, and wrote a version of the classic "Hello, world!" program which
-runs on his interpreter.
+of Wierd (which, as comments in its source code explain, differs from "official"
+Wierd), and wrote a version of the classic "Hello, world!" program which runs
+on his interpreter.
 
 Later on, based on his implementation, John wrote a specification for the
 language accepted by his interpreter, calling it Wierd.
@@ -48,24 +49,17 @@ Shortly after this, Chris also patched Milo's implementation to take standard
 long options, for portability (NetBSD doesn't have `getopt_long_only`.)  (Sorry
 Milo, hope you don't mind.)
 
-Shortly after *that*, Chris began writing an interpreter in Javascript of John's
-interpretation of Wierd, and discovered the source of the problems with his
-previous attempt: `hello.w` relies on incorrectly-documented behaviour.
-
-Specifically, while John's spec *and* the comments in John's interpreter say
-that during the "putget" operation, a zero value means "get" and a non-zero
-value means "put", in the implementation (on which `hello.w` relies), it is
-actually the other way around.
-
-[Befunge]: http://catseye.tc/node/Befunge-93
-[brainfuck]: http://esolangs.org/wiki/brainfuck
-[yoob]: http://catseye.tc/projects/yoob/
+Shortly after *that*, Chris began writing an interpreter in Javascript,
+using the [yoob.js][] framework, of John's interpretation of Wierd, and
+discovered the source of the problems with his previous attempt: `hello.w`
+relies on incorrectly-documented behaviour.  Specifically, while John's spec
+*and* the comments in John's interpreter say that during the "putget" operation,
+a zero value means "get" and a non-zero value means "put", in the
+implementation, it is actually the other way around.
 
 ### Given all this... ###
 
-Given all this, and given that the comments in John's interpreter explain
-some points about how it varies from "official" Wierd (the one in the email
-conversation)... well, here's how I see it.
+Given all this, well, here's how I see it.
 
 The name _Wierd_ refers to the language defined (however fuzzily) by that
 original email conversation.
@@ -83,7 +77,7 @@ would suffice.  (Therefore there are subdirectories `dialect/wierd-jnc` and
 `dialect/wierd-mvh` in this repository, and each of *those* contains the
 standard `src`, `doc`, and `eg` subdirectories.  And in addition, because
 Chris's interpreter implements John's Wierd, it is in the `impl` directory
-of `dialect/wierd-jnc`.)
+of `dialect/wierd-jnc`.  It is also [installed online at catseye.tc][].)
 
 And in light of all this, it might also be acceptable to consider Wierd to be
 a language *family* rather than a language.  I'm not yet decided on this point.
@@ -121,3 +115,11 @@ not a lawyer, your mileage may vary, caveat emptor, etc. etc.
 
 In stark (I hope) contrast to this, Chris's implementation, `wierd-jnc.js`, is
 placed into the public domain (see the file `UNLICENSE` in its directory.)
+
+- - - -
+
+[Befunge]: http://catseye.tc/node/Befunge-93
+[brainfuck]: http://catseye.tc/node/brainfuck
+[yoob]: http://catseye.tc/node/yoob
+[yoob.js]: http://catseye.tc/node/yoob.js
+[installed online at catseye.tc]: http://catseye.tc/installation/Wierd_%28John_Colagioia%29
