@@ -56,6 +56,7 @@ function launch(prefix, container, config) {
             outputElem.style.color = 'green';
             outputElem.style.fontFamily = 'monospace';
             outputElem.style.width = '100%';
+            outputElem.style.minHeight = '20px';
             yoob.makeLineBreak(statePanel);
 
             var editor = yoob.makeTextArea(container, 160, 80);
