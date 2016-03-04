@@ -1,5 +1,5 @@
 /*
- * This file is part of yoob.js version 0.8-PRE
+ * This file is part of yoob.js version 0.8
  * Available from https://github.com/catseye/yoob.js/
  * This file is in the public domain.  See http://unlicense.org/ for details.
  */
