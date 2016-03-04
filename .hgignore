@@ -1,7 +1,5 @@
-syntax: regexp
-
-^bin/
-
 syntax: glob
 
-*.o
+.empty
+bin/wierd-jnc
+bin/wierd-mvh

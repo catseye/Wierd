@@ -1,2 +1,3 @@
-bin/*
-*.o
+.empty
+bin/wierd-jnc
+bin/wierd-mvh
