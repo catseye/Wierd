@@ -171,14 +171,14 @@ function WierdController(proto) {
         } else if (this.tryAhead(135, true)) {
             var a = stack.pop();
             if (a !== 0) { /* spec says 0 is GET. in JC's interp, 0 is PUT. */
-                var x = stack.pop();
                 var y = stack.pop();
+                var x = stack.pop();
                 var e = (pf.get(x, y) || ' ').charCodeAt(0);
                 stack.push(e);
                 //console.log("[GET]");
             } else {
-                var x = stack.pop();
                 var y = stack.pop();
+                var x = stack.pop();
                 var c = String.fromCharCode(stack.pop());
                 pf.put(x, y, c);
                 //console.log("[PUT]");
